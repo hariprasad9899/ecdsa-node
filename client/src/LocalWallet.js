@@ -1,5 +1,5 @@
 import * as secp from "ethereum-cryptography/secp256k1.js";
-import { utf8ToBytes, toHex } from "ethereum-cryptography/utils.js";
+import { utf8ToBytes, hexToBytes, toHex } from "ethereum-cryptography/utils.js";
 import { keccak256 } from "ethereum-cryptography/keccak.js";
 
 const DETAILS = new Map([
@@ -30,12 +30,12 @@ const USERS = Array.from(DETAILS.keys());
 
 function getPublicKey(user) {
     if (!USERS.includes(user)) return null;
-    return DETAILS.get(user).public;
+    return hexToBytes(DETAILS.get(user).public);
 }
 
 function getPrivateKey(user) {
     if (!USERS.includes(user)) return null;
-    return DETAILS.get(user).private;
+    return hexToBytes(DETAILS.get(user).private);
 }
 
 function hashMessage(msg) {
@@ -56,4 +56,11 @@ async function signAndVerfiy(user, msg) {
     console.log(isSigned);
 }
 
-signAndVerfiy("hari", "code");
+const getAddress = (user) => {
+    if (!user || !USERS.includes(user)) return null;
+    const pubKey = getPublicKey(user);
+    const hash = keccak256(pubKey.slice(1));
+    return toHex(hash.slice(-20)).toUpperCase();
+};
+
+console.log(getAddress("pooja"));
