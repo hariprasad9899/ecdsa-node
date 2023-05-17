@@ -55,12 +55,17 @@ async function signAndVerfiy(user, msg) {
     const isSigned = secp.verify(tx, hashMessage(msg), getPublicKey(user));
     console.log(isSigned);
 }
-
-const getAddress = (user) => {
+function getAddress(user) {
     if (!user || !USERS.includes(user)) return null;
     const pubKey = getPublicKey(user);
     const hash = keccak256(pubKey.slice(1));
     return toHex(hash.slice(-20)).toUpperCase();
+}
+
+const wallet = {
+    USERS,
+    signmessage,
+    getAddress,
 };
 
-console.log(getAddress("pooja"));
+export default wallet;

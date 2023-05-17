@@ -8,9 +8,11 @@ function App() {
     const [address, setAddress] = useState("");
 
     return (
-        <div className="app">
-            <Wallet balance={balance} setBalance={setBalance} address={address} setAddress={setAddress} />
-            <Transfer setBalance={setBalance} address={address} />
+        <div className="app container-fluid">
+            <div className="row justify-content-between">
+                <Wallet balance={balance} setBalance={setBalance} address={address} setAddress={setAddress} />
+                <Transfer setBalance={setBalance} address={address} />
+            </div>
         </div>
     );
 }

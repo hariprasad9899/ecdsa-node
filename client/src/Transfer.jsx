@@ -2,53 +2,58 @@ import { useState } from "react";
 import server from "./server";
 
 function Transfer({ address, setBalance }) {
-  const [sendAmount, setSendAmount] = useState("");
-  const [recipient, setRecipient] = useState("");
+    const [sendAmount, setSendAmount] = useState("");
+    const [recipient, setRecipient] = useState("");
 
-  const setValue = (setter) => (evt) => setter(evt.target.value);
+    const setValue = (setter) => (evt) => setter(evt.target.value);
 
-  async function transfer(evt) {
-    evt.preventDefault();
-
-    try {
-      const {
-        data: { balance },
-      } = await server.post(`send`, {
-        sender: address,
-        amount: parseInt(sendAmount),
-        recipient,
-      });
-      setBalance(balance);
-    } catch (ex) {
-      alert(ex.response.data.message);
+    async function transfer(evt) {
+        evt.preventDefault();
+        try {
+            const {
+                data: { balance },
+            } = await server.post(`send`, {
+                sender: address,
+                amount: parseInt(sendAmount),
+                recipient,
+            });
+            setBalance(balance);
+        } catch (ex) {
+            alert(ex.response.data.message);
+        }
     }
-  }
 
-  return (
-    <form className="container transfer" onSubmit={transfer}>
-      <h1>Send Transaction</h1>
+    return (
+        <form className="col-md-6 transfer" onSubmit={transfer}>
+            <h1>Send Transaction</h1>
 
-      <label>
-        Send Amount
-        <input
-          placeholder="1, 2, 3..."
-          value={sendAmount}
-          onChange={setValue(setSendAmount)}
-        ></input>
-      </label>
+            <label className="form-label" htmlFor="sendAmount">
+                Send Amount
+            </label>
+            <input
+                className="form-control rounded-0 p-2"
+                placeholder="1, 2, 3..."
+                value={sendAmount}
+                id="sendAmount"
+                onChange={setValue(setSendAmount)}
+            ></input>
 
-      <label>
-        Recipient
-        <input
-          placeholder="Type an address, for example: 0x2"
-          value={recipient}
-          onChange={setValue(setRecipient)}
-        ></input>
-      </label>
+            <label htmlFor="recipient" className="form-label mt-2">
+                Recipient
+            </label>
+            <input
+                className="form-control rounded-0 p-2"
+                placeholder="Type an address, for example: 0x2"
+                value={recipient}
+                id="recipient"
+                onChange={setValue(setRecipient)}
+            ></input>
 
-      <input type="submit" className="button" value="Transfer" />
-    </form>
-  );
+            <button type="submit" className="btn w-100 btn-primary mt-2 p-2" value="Transfer">
+                TRANSFER
+            </button>
+        </form>
+    );
 }
 
 export default Transfer;
