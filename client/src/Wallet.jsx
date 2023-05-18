@@ -40,7 +40,7 @@ function Wallet({ address, setAddress, balance, setBalance, setSelectedVal }) {
             </label>
             <input
                 className="form-control rounded-0 p-2"
-                placeholder="Type an address, for example: 0x1"
+                placeholder="Choose the Wallet"
                 value={address}
                 id="walletAddress"
                 readOnly

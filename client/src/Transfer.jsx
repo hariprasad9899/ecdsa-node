@@ -94,7 +94,7 @@ function Transfer({ address, setBalance, selectedVal }) {
             </label>
             <input
                 className="form-control rounded-0 p-2"
-                placeholder="1, 2, 3..."
+                placeholder="1, 10, 20"
                 value={sendAmount}
                 id="sendAmount"
                 onChange={setValue(setSendAmount)}
@@ -105,7 +105,7 @@ function Transfer({ address, setBalance, selectedVal }) {
             </label>
             <input
                 className="form-control rounded-0 p-2"
-                placeholder="Type an address, for example: 0x2"
+                placeholder="Type an address of recipient"
                 value={recipient}
                 id="recipient"
                 onChange={setValue(setRecipient)}
