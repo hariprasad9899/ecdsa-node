@@ -1,15 +1,43 @@
 import { useState } from "react";
 import server from "./server";
 import LocalWallet from "./LocalWallet";
+import Authenticate from "./Authenticate";
+import { Modal, Button } from "react-bootstrap";
 
 function Transfer({ address, setBalance, selectedVal }) {
     const [sendAmount, setSendAmount] = useState("");
     const [recipient, setRecipient] = useState("");
+    const [isShow, invokeModal] = useState(false);
+    const [passwordVal, setPasswordVal] = useState("");
+    const [access, setAccess] = useState(false);
+
+    const initModal = () => {
+        return invokeModal(!false);
+    };
 
     const setValue = (setter) => (evt) => setter(evt.target.value);
 
-    async function transfer(evt) {
-        evt.preventDefault();
+    async function validate(p) {
+        let result = LocalWallet.passwordValidate(selectedVal, p);
+        console.log(result);
+        if (result) {
+            setAccess(true);
+            invokeModal(false);
+            setPasswordVal("");
+            await transactionConfirmed();
+        } else {
+            setAccess(false);
+            invokeModal(false);
+            setPasswordVal("");
+        }
+        return validate;
+    }
+
+    async function completeAuth() {
+        initModal();
+    }
+
+    async function transactionConfirmed() {
         const msg = {
             recipient,
             amount: parseInt(sendAmount),
@@ -28,6 +56,12 @@ function Transfer({ address, setBalance, selectedVal }) {
         } catch (ex) {
             alert(ex.response.data.message);
         }
+        setAccess(false);
+    }
+
+    async function transfer(evt) {
+        evt.preventDefault();
+        await completeAuth();
     }
 
     return (
@@ -59,6 +93,32 @@ function Transfer({ address, setBalance, selectedVal }) {
             <button type="submit" className="btn w-100 btn-primary mt-2 p-2" value="Transfer">
                 TRANSFER
             </button>
+
+            {/* {modalState ? (
+                <Authenticate setModalState={setModalState} authVal={authVal} setAuthVal={setAuthVal} />
+            ) : null} */}
+
+            <Modal show={isShow}>
+                <Modal.Header closeButton onClick={() => invokeModal(false)}>
+                    <Modal.Title>Please enter your password</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <input
+                        type="password"
+                        className="form-control"
+                        value={passwordVal}
+                        onChange={(e) => setPasswordVal(e.target.value)}
+                    />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="danger" onClick={() => invokeModal(false)}>
+                        Close
+                    </Button>
+                    <Button variant="dark" onClick={() => validate(passwordVal)}>
+                        Submit
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </form>
     );
 }

@@ -29,7 +29,7 @@ app.post("/send", async (req, res) => {
     const { msg, signature } = req.body;
     const { recipient, amount } = msg;
 
-    const pubKey = await crypto.signatureToPubKey(msg, signature);
+    const pubKey = crypto.signatureToPubKey(msg, signature);
     const sender = crypto.pubKeyToAddress(pubKey);
 
     setInitialBalance(sender);
