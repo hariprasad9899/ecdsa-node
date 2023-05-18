@@ -7,12 +7,6 @@ In the backend, the public key is recovered from the signature sent from the cli
 
 I have also added password verification, when making transaction. For all the styles and modals (for password verification), I have used Bootstrap library.
 
-### Video instructions
-
-For an overview of this project as well as getting started instructions, check out the following video:
-
-https://www.loom.com/share/0d3c74890b8e44a5918c4cacb3f646c4
-
 ### Client
 
 The client folder contains a [react app](https://reactjs.org/) using [vite](https://vitejs.dev/). To get started, follow these steps:
