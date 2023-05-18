@@ -3,32 +3,50 @@ import server from "./server";
 import LocalWallet from "./LocalWallet";
 import Authenticate from "./Authenticate";
 import { Modal, Button } from "react-bootstrap";
+import ReactDOM from "react-dom";
+import Error from "./alerts/Error";
+import Success from "./alerts/Success";
+import Warning from "./alerts/Warning";
 
 function Transfer({ address, setBalance, selectedVal }) {
     const [sendAmount, setSendAmount] = useState("");
     const [recipient, setRecipient] = useState("");
     const [isShow, invokeModal] = useState(false);
     const [passwordVal, setPasswordVal] = useState("");
-    const [access, setAccess] = useState(false);
+    const [failAlert, setFailAlert] = useState(false);
+    const [successAlert, setSuccessAlert] = useState(false);
+    const [warningAlert, setWarningAlert] = useState(false);
 
     const initModal = () => {
-        return invokeModal(!false);
+        if (recipient.length > 0 && address.length > 0 && sendAmount.length > 0) {
+            return invokeModal(!false);
+        } else {
+            setWarningAlert(true);
+            setTimeout(() => {
+                setWarningAlert(false);
+            }, 3000);
+        }
     };
 
     const setValue = (setter) => (evt) => setter(evt.target.value);
 
     async function validate(p) {
+        if (p.length < 1) {
+            return;
+        }
         let result = LocalWallet.passwordValidate(selectedVal, p);
         console.log(result);
         if (result) {
-            setAccess(true);
             invokeModal(false);
             setPasswordVal("");
             await transactionConfirmed();
         } else {
-            setAccess(false);
             invokeModal(false);
             setPasswordVal("");
+            setFailAlert(true);
+            setTimeout(() => {
+                setFailAlert(false);
+            }, 3000);
         }
         return validate;
     }
@@ -53,10 +71,13 @@ function Transfer({ address, setBalance, selectedVal }) {
                 data: { balance },
             } = await server.post(`send`, transaction);
             setBalance(balance);
+            setSuccessAlert(true);
+            setTimeout(() => {
+                setSuccessAlert(false);
+            }, 3000);
         } catch (ex) {
             alert(ex.response.data.message);
         }
-        setAccess(false);
     }
 
     async function transfer(evt) {
@@ -66,7 +87,7 @@ function Transfer({ address, setBalance, selectedVal }) {
 
     return (
         <form className="col-md-6 transfer" onSubmit={transfer}>
-            <h1>Send Transaction</h1>
+            <h1 className="text-dark">Send Transaction</h1>
 
             <label className="form-label" htmlFor="sendAmount">
                 Send Amount
@@ -90,35 +111,21 @@ function Transfer({ address, setBalance, selectedVal }) {
                 onChange={setValue(setRecipient)}
             ></input>
 
-            <button type="submit" className="btn w-100 btn-primary mt-2 p-2" value="Transfer">
+            <button type="submit" className="btn w-100 btn-primary mt-3 p-2 rounded-0" value="Transfer">
                 TRANSFER
             </button>
 
-            {/* {modalState ? (
-                <Authenticate setModalState={setModalState} authVal={authVal} setAuthVal={setAuthVal} />
-            ) : null} */}
+            <Authenticate
+                isShow={isShow}
+                invokeModal={invokeModal}
+                validate={validate}
+                setPasswordVal={setPasswordVal}
+                passwordVal={passwordVal}
+            />
 
-            <Modal show={isShow}>
-                <Modal.Header closeButton onClick={() => invokeModal(false)}>
-                    <Modal.Title>Please enter your password</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <input
-                        type="password"
-                        className="form-control"
-                        value={passwordVal}
-                        onChange={(e) => setPasswordVal(e.target.value)}
-                    />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="danger" onClick={() => invokeModal(false)}>
-                        Close
-                    </Button>
-                    <Button variant="dark" onClick={() => validate(passwordVal)}>
-                        Submit
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            {failAlert ? ReactDOM.createPortal(<Error />, document.getElementById("root")) : null}
+            {successAlert ? ReactDOM.createPortal(<Success />, document.getElementById("root")) : null}
+            {warningAlert ? ReactDOM.createPortal(<Warning />, document.getElementById("root")) : null}
         </form>
     );
 }

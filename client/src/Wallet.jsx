@@ -18,12 +18,16 @@ function Wallet({ address, setAddress, balance, setBalance, setSelectedVal }) {
 
     return (
         <div className="col-md-6 wallet">
-            <h1>Your Wallet</h1>
+            <h1 className="text-dark">Your Wallet</h1>
 
+            <label htmlFor="selectaccount" className="form-label">
+                Select Account
+            </label>
             <select
-                className="form-select rounded-0 mb-3 p-2 mt-4"
+                className="form-select rounded-0 mb-2 p-2"
                 defaultValue="Choose the Wallet Address"
                 onChange={handleSelectChange}
+                id="selectaccount"
             >
                 <option disabled>Choose the Wallet Address</option>
                 {LocalWallet.USERS.map((item) => {
@@ -41,7 +45,9 @@ function Wallet({ address, setAddress, balance, setBalance, setSelectedVal }) {
                 id="walletAddress"
                 readOnly
             ></input>
-            <div className="balance">Balance: {balance}</div>
+            <div className="w-100 p-2 mt-3 mb-3 balance" style={{ backgroundColor: "#f4f6f8" }}>
+                BALANCE: {balance}
+            </div>
         </div>
     );
 }

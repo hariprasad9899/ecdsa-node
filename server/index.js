@@ -7,12 +7,6 @@ const port = 3042;
 app.use(cors());
 app.use(express.json());
 
-// const balances = {
-//     "0x1": 100,
-//     "0x2": 50,
-//     "0x3": 75,
-// };
-
 const balances = {
     F1F0499926D9B9A8B7B1CAF938C8EC1E93F56DF2: 100,
     D609349F29CB6821C88061E42AC1D6EA97EE0820: 50,
